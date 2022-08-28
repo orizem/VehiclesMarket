@@ -1,0 +1,25 @@
+<!-- templates/search.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Search Vehicle
+</h1>
+<button onclick="{% set vehicles = search_filter(vehicles,0) %}">test btn 0</button>
+<button onclick="{% set vehicles = search_filter(vehicles,1) %}">test btn 1</button>
+<button onclick="{% set vehicles = search_filter(vehicles,2) %}">test btn 2</button>
+<table class="table table-dark">
+    {% for col in vehicles.columns %}
+    <th>{{ col }}</th>
+    {% endfor %}
+
+    {% for _,row in vehicles.T.iteritems() %}
+    <tr>
+        {% for val in row %}
+        <td>{{ val }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
