@@ -21,7 +21,7 @@ def profile():
 @main.route('/search')
 @login_required
 def search():
-    _vehicles = pd.read_csv(r"C:\Users\orize\Documents\MEGA\MEGAsync\Study\Computer Engineering\year c\צד שרת\final_project\car data.csv")
+    _vehicles = pd.read_csv(r"test_files\car data.csv")
     return render_template('search.html', name=current_user.name, page='search', vehicles=_vehicles)
 
 
