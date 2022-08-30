@@ -34,6 +34,13 @@
                                 Profile
                             </a>
                             {% endif %}
+
+                            <a href="{{ url_for('main.analytics') }}" 
+                            {% if page == 'analytics' %} class="navbar-item btn btn-outline-light">
+                            {% else %} class="navbar-item"> {% endif %}
+                                Analytics
+                            </a>
+
                             {% if current_user.is_authenticated %}
                             <a href="{{ url_for('main.search') }}" 
                             {% if page == 'search' %} class="navbar-item btn btn-outline-light">
@@ -41,6 +48,7 @@
                                 Search
                             </a>
                             {% endif %}
+
                             {% if not current_user.is_authenticated %}
                             <a href="{{ url_for('auth.login') }}"
                             {% if page == 'login' %} class="navbar-item btn btn-outline-light">
@@ -53,6 +61,7 @@
                                 Sign Up
                             </a>
                             {% endif %}
+
                             {% if current_user.is_authenticated %}
                             <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                                 Logout

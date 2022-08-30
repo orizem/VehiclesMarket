@@ -1,11 +1,12 @@
 # main.py
 
 from flask import Blueprint, render_template
+from create_map import CreateMap
 from flask_login import login_required, current_user
-import pandas as pd
 from templatetags.test import search_filter
 from django import template
 
+import pandas as pd
 
 main = Blueprint('main', __name__)
 
@@ -22,7 +23,16 @@ def profile():
 @login_required
 def search():
     _vehicles = pd.read_csv(r"test_files\car data.csv")
-    return render_template('search.html', name=current_user.name, page='search', vehicles=_vehicles)
+    return render_template('search.html', page='search', vehicles=_vehicles)
+
+@main.route('/analytics')
+def analytics():
+    CreateMap()
+    return render_template('analytics.html', page='analytics')
+
+@main.route('/map')
+def map():
+    return render_template('map.html', page='analytics')
 
 
 register = template.Library()
