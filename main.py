@@ -23,7 +23,8 @@ def profile():
 @login_required
 def search():
     _vehicles = pd.read_csv(r"test_files\car data.csv")
-    return render_template('search.html', page='search', vehicles=_vehicles)
+    html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
+    return render_template('search.html', page='search', df=html)
 
 @main.route('/analytics')
 def analytics():
