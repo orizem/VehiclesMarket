@@ -18,6 +18,7 @@ python -m pip install -r .\requirements.txt
 set FLASK_APP=development
 $env:FLASK_ENV="development"
 set FLASK_APP=__init__.py
+<br />
 $env:FLASK_APP = "__init__.py"
 
 python -m flask run
