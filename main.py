@@ -1,11 +1,14 @@
 # main.py
 
 from flask import Blueprint, render_template
+from create_map import CreateMap
 from flask_login import login_required, current_user
-import pandas as pd
 from templatetags.test import search_filter
 from django import template
-
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+from shapely.ops import unary_union
 
 main = Blueprint('main', __name__)
 
@@ -22,7 +25,39 @@ def profile():
 @login_required
 def search():
     _vehicles = pd.read_csv(r"test_files\car data.csv")
-    return render_template('search.html', name=current_user.name, page='search', vehicles=_vehicles)
+    html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
+    return render_template('search.html', page='search', df=html)
+
+@main.route('/analytics')
+def analytics():
+    gdf = gpd.read_file(r'shape files/israel.shp')
+    
+    # find the bounds of your geodataframe
+    x_min, y_min, x_max, y_max = gdf.total_bounds
+
+    # set sample size
+    n = 1000
+    # generate random data within the bounds
+    x = np.random.uniform(x_min, x_max, n)
+    y = np.random.uniform(y_min, y_max, n)
+
+    # convert them to a points GeoSeries
+    gdf_points = gpd.GeoSeries(gpd.points_from_xy(x, y))
+    # only keep those points within polygons
+    gdf_points = gdf_points[gdf_points.within(gdf.unary_union)]
+
+    gdf2 = gpd.GeoDataFrame()
+    gdf2['geometry'] = gdf_points
+    gdf2.crs = gdf.crs 
+
+    print(gdf.columns)
+
+    CreateMap([gdf, gdf2], ['Polygon', 'Points'])
+    return render_template('analytics.html', page='analytics')
+
+@main.route('/map')
+def map():
+    return render_template('map.html', page='analytics')
 
 
 register = template.Library()
