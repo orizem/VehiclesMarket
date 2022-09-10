@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from shapely.ops import unary_union
+from os.path import join
+from .config import PROJECT_NAME
 
 main = Blueprint('main', __name__)
 
@@ -24,13 +26,13 @@ def profile():
 @main.route('/search')
 @login_required
 def search():
-    _vehicles = pd.read_csv(r"website\test_files\car data.csv")
+    _vehicles = pd.read_csv(join(PROJECT_NAME, r"test_files\car data.csv"))
     html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
     return render_template('search.html', page='search', df=html)
 
 @main.route('/analytics')
 def analytics():
-    gdf = gpd.read_file(r"website\shape files\israel.shp")
+    gdf = gpd.read_file(join(PROJECT_NAME, r"shape files\israel.shp"))
     
     # find the bounds of your geodataframe
     x_min, y_min, x_max, y_max = gdf.total_bounds
