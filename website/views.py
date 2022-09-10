@@ -48,13 +48,13 @@ def analytics():
     # only keep those points within polygons
     gdf_points = gdf_points[gdf_points.within(gdf.unary_union)]
 
-    gdf_points = gpd.GeoDataFrame()
-    gdf_points['geometry'] = gdf_points
-    gdf_points.crs = gdf.crs 
+    gdf2 = gpd.GeoDataFrame()
+    gdf2['geometry'] = gdf_points
+    gdf2.crs = gdf.crs 
 
-    heat_data = [[point.xy[1][0], point.xy[0][0]] for point in gdf_points.geometry ]
+    heat_data = [[point.xy[1][0], point.xy[0][0]] for point in gdf2.geometry ]
 
-    CreateMap([gdf, gdf_points, heat_data], ['Polygon', 'Points', 'Heat Map'])
+    CreateMap([gdf, gdf2, heat_data], ['Polygon', 'Points', 'Heat Map'])
     return render_template('analytics.html', page='analytics')
 
 @main.route('/map')
