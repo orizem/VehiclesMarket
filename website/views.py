@@ -1,15 +1,17 @@
 # views.py
 
 from flask import Blueprint, render_template
-from .create_map import CreateMap
 from flask_login import login_required, current_user
-from .templatetags.test import search_filter
 from django import template
+
+from os.path import join
 import numpy as np
 import pandas as pd
-import geopandas as gpd
 from shapely.ops import unary_union
-from os.path import join
+import geopandas as gpd
+
+from .templatetags.test import search_filter
+from .create_map import CreateMap
 from .config import PROJECT_NAME
 
 main = Blueprint('main', __name__)

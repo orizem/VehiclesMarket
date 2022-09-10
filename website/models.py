@@ -1,6 +1,7 @@
 # models.py
 
 from flask_login import UserMixin
+
 from . import db
 
 class User(UserMixin, db.Model):

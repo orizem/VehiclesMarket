@@ -1,7 +1,9 @@
 import folium
 from folium import plugins
 from folium.plugins import LocateControl
+
 from os.path import join
+
 from .config import PROJECT_NAME
 
 POINTS_DICT = {'test':'State name:', 'x':'X:', 'y':'Y:'} # TODO: move to config file

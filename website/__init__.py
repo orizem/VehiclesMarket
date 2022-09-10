@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
+
 from .views import search_filter
 from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI
 
