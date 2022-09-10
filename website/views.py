@@ -50,6 +50,9 @@ def analytics():
 
     gdf2 = gpd.GeoDataFrame()
     gdf2['geometry'] = gdf_points
+    gdf2['test'] = 'test'
+    gdf2['x'] = gdf2['geometry'].x
+    gdf2['y'] = gdf2['geometry'].y
     gdf2.crs = gdf.crs 
 
     heat_data = [[point.xy[1][0], point.xy[0][0]] for point in gdf2.geometry ]
