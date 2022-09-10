@@ -38,7 +38,7 @@ def analytics():
     x_min, y_min, x_max, y_max = gdf.total_bounds
 
     # set sample size
-    n = 1000
+    n = 100
     # generate random data within the bounds
     x = np.random.uniform(x_min, x_max, n)
     y = np.random.uniform(y_min, y_max, n)
@@ -48,13 +48,13 @@ def analytics():
     # only keep those points within polygons
     gdf_points = gdf_points[gdf_points.within(gdf.unary_union)]
 
-    gdf2 = gpd.GeoDataFrame()
-    gdf2['geometry'] = gdf_points
-    gdf2.crs = gdf.crs 
+    gdf_points = gpd.GeoDataFrame()
+    gdf_points['geometry'] = gdf_points
+    gdf_points.crs = gdf.crs 
 
-    print(gdf.columns)
+    heat_data = [[point.xy[1][0], point.xy[0][0]] for point in gdf_points.geometry ]
 
-    CreateMap([gdf, gdf2], ['Polygon', 'Points'])
+    CreateMap([gdf, gdf_points, heat_data], ['Polygon', 'Points', 'Heat Map'])
     return render_template('analytics.html', page='analytics')
 
 @main.route('/map')
