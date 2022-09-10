@@ -3,7 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
-from main import search_filter
+from .views import search_filter
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -32,7 +32,7 @@ def create_app():
     app.register_blueprint(auth_blueprint)
 
     # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
+    from .views import main as main_blueprint
     app.register_blueprint(main_blueprint)
     app.jinja_env.globals.update(search_filter=search_filter)
     return app

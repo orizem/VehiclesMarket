@@ -11,4 +11,4 @@ class CreateMap():
             m.fit_bounds([[y1, x1], [y2, x2]])
             folium.GeoJson(gdf,name=name).add_to(m)
         folium.LayerControl().add_to(m)
-        m.save('templates/map.html')
+        m.save(r'website\templates\map.html')
