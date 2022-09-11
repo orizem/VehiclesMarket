@@ -14,28 +14,28 @@ from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
 
-main = Blueprint('main', __name__)
+views = Blueprint('views', __name__)
 
 def page_not_found(e):
   return render_template('404.html'), 404
 
-@main.route('/')
+@views.route('/')
 def index():
     return render_template('index.html', page='home')
 
-@main.route('/profile')
+@views.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html', name=current_user.name, page='profile')
 
-@main.route('/search')
+@views.route('/search')
 @login_required
 def search():
     _vehicles = pd.read_csv(join(PROJECT_NAME, r"test_files\car data.csv"))
     html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
     return render_template('search.html', page='search', df=html)
 
-@main.route('/analytics')
+@views.route('/analytics')
 def analytics():
     gdf = gpd.read_file(join(PROJECT_NAME, r"shape files\israel.shp"))
     
@@ -65,7 +65,7 @@ def analytics():
     CreateMap([gdf, gdf2, heat_data], ['Polygon', 'Points', 'Heat Map'])
     return render_template('analytics.html', page='analytics')
 
-@main.route('/map')
+@views.route('/map')
 def map():
     return render_template('map.html', page='analytics')
 
