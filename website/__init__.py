@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 
-from .views import search_filter
+from .views import search_filter, page_not_found
 from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI
 
 # init SQLAlchemy so we can use it later in our models
@@ -27,6 +27,9 @@ def create_app():
     def load_user(user_id):
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
+
+    # page not found
+    app.register_error_handler(404, page_not_found)
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
