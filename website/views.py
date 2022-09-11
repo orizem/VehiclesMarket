@@ -3,36 +3,34 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from django import template
-
 from os.path import join
 import numpy as np
 import pandas as pd
 from shapely.ops import unary_union
 import geopandas as gpd
-
 from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
 
-main = Blueprint('main', __name__)
+views = Blueprint('views', __name__)
 
-@main.route('/')
+@views.route('/')
 def index():
     return render_template('index.html', page='home')
 
-@main.route('/profile')
+@views.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.name, page='profile')
+    return render_template('profile.html', name=current_user.full_name, page='profile')
 
-@main.route('/search')
+@views.route('/search')
 @login_required
 def search():
     _vehicles = pd.read_csv(join(PROJECT_NAME, r"test_files\car data.csv"))
     html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
     return render_template('search.html', page='search', df=html)
 
-@main.route('/analytics')
+@views.route('/analytics')
 def analytics():
     gdf = gpd.read_file(join(PROJECT_NAME, r"shape files\israel.shp"))
     
@@ -62,7 +60,7 @@ def analytics():
     CreateMap([gdf, gdf2, heat_data], ['Polygon', 'Points', 'Heat Map'])
     return render_template('analytics.html', page='analytics')
 
-@main.route('/map')
+@views.route('/map')
 def map():
     return render_template('map.html', page='analytics')
 
