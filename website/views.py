@@ -69,6 +69,30 @@ def analytics():
 def map():
     return render_template('map.html', page='analytics')
 
+@views.route('/post_vehicle')
+@login_required
+def post_vehicle():
+    from . import db
+    from .forms import PostVehicleForm
+    from .models import PostVehicle
+    form_post_vehicle = PostVehicleForm()
+    if form_post_vehicle.validate_on_submit():
+        vehicle_to_add = PostVehicle(
+            img = form_post_vehicle.img.data, 
+            brand = form_post_vehicle.brand.data,
+            model = form_post_vehicle.model.data,
+            edition = form_post_vehicle.edition.data,
+            year = form_post_vehicle.year.data,
+            condition = form_post_vehicle.condition.data,
+            transmission = form_post_vehicle.transmission.data,
+            body = form_post_vehicle.body.data,
+            fuel = form_post_vehicle.fuel.data,
+            capacity = form_post_vehicle.capacity.data
+        )
+        db.session.add(vehicle_to_add)
+        db.session.commit()
+    return render_template('post_vehicle.html', page='post_vehicle', form=form_post_vehicle)
+
 
 register = template.Library()
 

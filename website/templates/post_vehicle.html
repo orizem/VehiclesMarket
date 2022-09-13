@@ -1,0 +1,13 @@
+<!-- templates/post_vehicle.html -->
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<h1 class="title">
+  Post Vehicle
+</h1>
+<h2 class="subtitle">
+    {{ wtf.quick_form(form) }}
+</h2>
+{% endblock %}

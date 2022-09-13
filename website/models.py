@@ -13,6 +13,20 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+    
+    
+class PostVehicle(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    img = db.Column(db.String(20))
+    brand = db.Column(db.String(20))
+    model = db.Column(db.String(20))
+    edition = db.Column(db.String(20))
+    year = db.Column(db.String(4))
+    condition = db.Column(db.String(20))
+    transmission = db.Column(db.String(20))
+    body = db.Column(db.String(20))
+    fuel = db.Column(db.String(20))
+    capacity = db.Column(db.String(20))
 
 
 # class User(UserMixin, db.Model):
