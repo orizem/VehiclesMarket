@@ -9,21 +9,14 @@ from flask_login import login_required, current_user
 from django import template
 from os.path import join
 import numpy as np
-import pandas as pd
 from shapely.ops import unary_union
 import geopandas as gpd
-from .auth import login
 from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
 from .forms import ProfileForm
-from .models import User
 from werkzeug.utils import secure_filename
-from . import db
-import io
 import base64
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
 views = Blueprint('views', __name__)
 
@@ -37,6 +30,9 @@ def index():
 @views.route('/profile')
 @login_required
 def profile():
+    from .models import User
+    from . import db
+
     user = User.query.filter_by(id=current_user.id).first()
     profile_is_exist = False
     if user.phone_number or user.state or user.city or user.gender or user.profession or user.addition_details:
@@ -51,6 +47,9 @@ def profile():
 @views.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    from .models import User
+    from . import db
+
     form = ProfileForm()
     user = User.query.filter_by(id=current_user.id).first()
     if form.validate_on_submit():
