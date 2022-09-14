@@ -31,3 +31,8 @@ class ProfileForm(FlaskForm):
     addition_details = TextAreaField('Addition Details')
     img = FileField('Upload an image')
     submit = SubmitField('Submit')
+
+# Search Vehicle form
+class SearchForm(FlaskForm):
+    model = StringField('Model')
+    submit = SubmitField('Search')

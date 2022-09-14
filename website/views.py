@@ -25,8 +25,10 @@ import base64
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-
 views = Blueprint('views', __name__)
+
+def page_not_found(e):
+  return render_template('404.html'), 404
 
 @views.route('/')
 def index():
@@ -71,9 +73,9 @@ def edit_profile():
 @views.route('/search')
 @login_required
 def search():
-    _vehicles = pd.read_csv(join(PROJECT_NAME, r"test_files\car data.csv"))
-    html = _vehicles.to_html(classes='table table-striped table-dark', table_id='data').replace('<thead', '<thead class="table-light"')
-    return render_template('search.html', page='search', df=html)
+    from .forms import SearchForm
+    search_form = SearchForm()
+    return render_template('search.html', page='search', form=search_form)
 
 @views.route('/analytics')
 def analytics():

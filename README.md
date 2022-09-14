@@ -4,7 +4,7 @@ FullStackApp_ServerSide
 
 # Start project:
 1) run set_up.py
-2) copy the lines below to powershell in this order!
+2) copy the lines below to cmd in this order!
 
 python -m pip install --upgrade pip
 
@@ -13,7 +13,7 @@ python -m venv venv
 .\venv\Scripts\activate
 
 python -m pip install --upgrade pip
-python -m pip install -r .\requirements.txt
+python -m pip install -r requirements.txt --force-reinstall
 
 set FLASK_APP=development
 $env:FLASK_ENV="development"
