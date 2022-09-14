@@ -4,9 +4,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 from flask_bootstrap import Bootstrap
-
+from flask_bootstrap import Bootstrap
 from .views import search_filter, page_not_found
-from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI
+from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI, DB_NAME
+from os import path
+
+bootstrap = Bootstrap()
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -17,13 +20,15 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
     db.init_app(app)
-    Bootstrap(app)
+    bootstrap.init_app(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
     from .models import User
+
+    create_database(app)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -41,4 +46,11 @@ def create_app():
     from .views import views as views_blueprint
     app.register_blueprint(views_blueprint)
     app.jinja_env.globals.update(search_filter=search_filter)
+
     return app
+
+
+def create_database(app):
+    if not path.exists(f'website/{DB_NAME}'):
+        db.create_all(app=app)
+        print('Database has been created')
