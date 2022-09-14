@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
+from flask_bootstrap import Bootstrap
 
 from .views import search_filter, page_not_found
 from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI
@@ -16,6 +17,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
     db.init_app(app)
+    Bootstrap(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
