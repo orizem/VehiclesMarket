@@ -15,30 +15,7 @@
                 {% endif %}
             {% endwith %}
             
-            {{ wtf.quick_form(login_form) }}
+            {{ wtf.quick_form(form) }}
         </div>
     </div>
 {% endblock %}
-
-
-
-        <!-- <form method="POST" action="/login">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
-                </div>
-            </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox">
-                    Remember me
-                </label>
-            </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
-        </form> -->

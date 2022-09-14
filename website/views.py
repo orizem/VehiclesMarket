@@ -1,6 +1,10 @@
-# views.py
+# This file handles all routes to pages like: profile, analytics
+# profile - GET, POST
+# search - GET
+# analytics - GET
 
-from flask import Blueprint, render_template
+from base64 import b64decode
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from django import template
 from os.path import join
@@ -8,9 +12,19 @@ import numpy as np
 import pandas as pd
 from shapely.ops import unary_union
 import geopandas as gpd
+from .auth import login
 from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
+from .forms import ProfileForm
+from .models import User
+from werkzeug.utils import secure_filename
+from . import db
+import io
+import base64
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
 
 views = Blueprint('views', __name__)
 
@@ -21,7 +35,38 @@ def index():
 @views.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.full_name, page='profile')
+    user = User.query.filter_by(id=current_user.id).first()
+    profile_is_exist = False
+    if user.phone_number or user.state or user.city or user.gender or user.profession or user.addition_details:
+        profile_is_exist = True
+    img=''
+    if user.img:
+        # Convert BLOB to binary 64
+        img = base64.b64encode(user.img).decode()
+    # print(user.img)
+    return render_template('profile.html', profile_is_exist=profile_is_exist, user=user, page='profile', img=img)
+
+@views.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = ProfileForm()
+    user = User.query.filter_by(id=current_user.id).first()
+    if form.validate_on_submit():
+        user.phone_number = form.phone_number.data
+        user.state = form.state.data
+        user.city = form.city.data
+        user.gender = form.gender.data
+        user.profession = form.profession.data
+        user.addition_details = form.addition_details.data
+        user.phone_number = form.phone_number.data
+        if not form.img.data:
+            user.img_name = ''
+        else:
+            user.img = form.img.data.read()
+            user.img_name = secure_filename(form.img.data.filename)
+        db.session.commit()
+        return redirect(url_for('views.profile'))
+    return render_template('edit_profile.html', name='edit_profile', form=form)
 
 @views.route('/search')
 @login_required
@@ -63,7 +108,6 @@ def analytics():
 @views.route('/map')
 def map():
     return render_template('map.html', page='analytics')
-
 
 register = template.Library()
 
