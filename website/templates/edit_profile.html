@@ -1,54 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-<head>
-    <!--
-        CSS for uploading profile image
-    -->
-    <style>
-        .drop-zone {
-            max-width: 200px;
-            height: 200px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 500;
-            font-size: 20px;
-            cursor: pointer;
-            color: #cccccc;
-            border: 4px dashed #009578;
-            border-radius: 10px;
-        }
-        .drop-zone--over {
-            border-style: solid;
-        }
-        .drop-zone__input {
-            display: none;
-        }
-        img {
-            max-width: 150px;
-            max-height: 150px;
-        }
-        .image-preview {
-            max-width: 100%;
-            max-height: 100%;
-            /* border: 2px solid #dddddd; */
-            /* margin-top: 15px; */
-            /* Default Text */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #cccccc;
-        }
-        .image-preview__image {
-            display: none;
-            width: 100%;
-        }
-    </style>
-</head>
+
 {% block content %}
     <div class="column is-4 is-offset-4">
         <h3 class="title">Edit Profile</h3>

@@ -23,10 +23,10 @@ class SignupForm(FlaskForm):
 
 # Profile Flask form
 class ProfileForm(FlaskForm):
-    phone_number = StringField('Phone Number', validators=[Length(9, 15)])
+    phone_number = StringField('Phone Number', validators=[Length(10, 11)])
     state = StringField('State')
     city = StringField('City')
-    gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')])
+    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')])
     profession = StringField('Profession')
     addition_details = TextAreaField('Addition Details')
     img = FileField('Upload an image')

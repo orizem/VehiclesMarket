@@ -3,6 +3,10 @@
 # search - GET
 # analytics - GET
 
+import geopandas as gpd
+import base64
+from . import db
+from .models import User
 from base64 import b64decode
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
@@ -10,13 +14,11 @@ from django import template
 from os.path import join
 import numpy as np
 from shapely.ops import unary_union
-import geopandas as gpd
 from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
-from .forms import ProfileForm
+from .forms import ProfileForm, SearchForm
 from werkzeug.utils import secure_filename
-import base64
 
 views = Blueprint('views', __name__)
 
@@ -30,26 +32,16 @@ def index():
 @views.route('/profile')
 @login_required
 def profile():
-    from .models import User
-    from . import db
-
     user = User.query.filter_by(id=current_user.id).first()
-    profile_is_exist = False
-    if user.phone_number or user.state or user.city or user.gender or user.profession or user.addition_details:
-        profile_is_exist = True
     img=''
     if user.img:
         # Convert BLOB to binary 64
         img = base64.b64encode(user.img).decode()
-    # print(user.img)
-    return render_template('profile.html', profile_is_exist=profile_is_exist, user=user, page='profile', img=img)
+    return render_template('profile.html', user=user, img_name=user.img_name, img=img, num_of_cars=3)
 
 @views.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    from .models import User
-    from . import db
-
     form = ProfileForm()
     user = User.query.filter_by(id=current_user.id).first()
     if form.validate_on_submit():
@@ -62,17 +54,17 @@ def edit_profile():
         user.phone_number = form.phone_number.data
         if not form.img.data:
             user.img_name = ''
+            user.img = ''
         else:
             user.img = form.img.data.read()
             user.img_name = secure_filename(form.img.data.filename)
         db.session.commit()
         return redirect(url_for('views.profile'))
-    return render_template('edit_profile.html', name='edit_profile', form=form)
+    return render_template('edit_profile.html', name='edit_profile', form=form, img_name=user.img_name)
 
 @views.route('/search')
 @login_required
 def search():
-    from .forms import SearchForm
     search_form = SearchForm()
     return render_template('search.html', page='search', form=search_form)
 
