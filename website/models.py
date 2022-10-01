@@ -17,13 +17,12 @@ class User(UserMixin, db.Model):
     gender = db.Column(db.String(10))
     profession = db.Column(db.String(50))
     addition_details = db.Column(db.Text)
-    img = db.Column(db.String(500), unique=True)
-    img_name = db.Column(db.String(500), unique=True)
+    img = db.Column(db.String(500))
+    img_name = db.Column(db.String(500))
     vehicles = db.relationship('Vehicle') # One to many
 
 class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
-    img = db.Column(db.String(500))
     brand = db.Column(db.String(20))
     model = db.Column(db.String(20))
     edition = db.Column(db.String(20))
@@ -33,4 +32,6 @@ class Vehicle(db.Model):
     body = db.Column(db.String(20))
     fuel = db.Column(db.String(20))
     capacity = db.Column(db.String(20))
+    img = db.Column(db.String(500))
+    img_name = db.Column(db.String(500))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

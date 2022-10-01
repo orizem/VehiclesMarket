@@ -7,7 +7,9 @@ from .models import User
 from . import db
 from .forms import LoginForm, SignupForm
 
+
 auth = Blueprint('auth', __name__)
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -45,6 +47,7 @@ def sign_up():
             login_user(user_to_add, remember=True)
             return redirect(url_for('views.profile'))
     return render_template('signup.html', page='signup', form=form)
+
 
 @auth.route('/logout')
 @login_required
