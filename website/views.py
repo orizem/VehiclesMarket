@@ -48,10 +48,10 @@ def profile():
     if vehicles:
         # Convert all the vehicles images
         for vehicle in vehicles:
-            vehicle_img = ''
             if vehicle.img:
-                vehicle_img = vehicle.img
-            vehicle.img = base64.standard_b64encode(vehicle_img).decode('utf-8')  # Convert BLOB to binary 64
+                vehicle.img = base64.b64encode(vehicle.img).decode()  # Convert BLOB to binary 64
+            else:
+                vehicle.img = None
 
     return render_template('profile.html', user=user, profile_img=profile_img, vehicles=vehicles)
 
@@ -78,7 +78,7 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for('views.profile'))
 
-    return render_template('edit_profile.html', name='edit_profile', form=form, is_profile_exist=True)
+    return render_template('edit_profile.html', name='edit_profile', form=form)
 
 
 @views.route('/delete_profile', methods=['GET', 'POST'])
@@ -109,13 +109,13 @@ def upload_vehicle():
             vehicle_img = ''
             vehicle_img_filename = ''
         else:
-            vehicle_img = uploaded_img.read()
+            vehicle_img = uploaded_img
             vehicle_img_filename = secure_filename(form.img.data.filename)
 
         # Add a Vehicle
         vehicle_to_add = Vehicle(brand=form.brand.data, model=form.model.data, edition=form.edition.data, year=form.year.data, 
                                 condition=form.condition.data, transmission=form.transsmission.data, body=form.body.data, 
-                                fuel=form.fuel.data, capacity=form.capacity.data, img=vehicle_img, img_name=vehicle_img_filename, user_id=current_user.id)
+                                fuel=form.fuel.data, capacity=form.capacity.data, img=uploaded_img.read(), img_name=vehicle_img_filename, user_id=current_user.id)
         db.session.add(vehicle_to_add)
         db.session.commit()
         return redirect(url_for('views.profile'))

@@ -64,10 +64,10 @@
         {% for vehicle in vehicles %}
         <div class="card-group">
             <div class="card"> <!-- Card image -->
-              {% if vehicle.img %}
+              {% if vehicle.img != none %}
                 <img src="data:image/jpeg;base64, {{ vehicle.img }}" class="card-img-top">
               {% else %}
-                <img src="{{ url_for('static', filename='images/default_vehicle_img') }}" class="card-img-top">
+                <img src="{{ url_for('static', filename='images/default_vehicle_img.jpg') }}" class="card-img-top">
               {% endif %}
               <div class="card-body">
                 <ul class="list-group list-group-flush">
