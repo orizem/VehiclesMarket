@@ -25,11 +25,11 @@ class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     brand = db.Column(db.String(20))
     model = db.Column(db.String(20))
-    edition = db.Column(db.String(20))
     year = db.Column(db.String(4))
+    price = db.Column(db.String(8))
     condition = db.Column(db.String(20))
     transmission = db.Column(db.String(20))
-    body = db.Column(db.String(20))
+    km_driven = db.Column(db.String(20))
     fuel = db.Column(db.String(20))
     capacity = db.Column(db.String(20))
     img = db.Column(db.String(500))
