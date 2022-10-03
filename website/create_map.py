@@ -6,7 +6,7 @@ from os.path import join
 
 from .config import PROJECT_NAME
 
-POINTS_DICT = {'test':'State name:', 'x':'X:', 'y':'Y:'} # TODO: move to config file
+POINTS_DICT = ['brand', 'model', 'year', 'price', 'condition', 'transmission', 'km_driven', 'fuel', 'capacity', 'lat', 'lng'] # TODO: move to config file
 
 class CreateMap():
     def __init__(self, gdfs, names):
@@ -19,14 +19,14 @@ class CreateMap():
             else:    
                 x1,y1,x2,y2 = gdf['geometry'].total_bounds
                 m.fit_bounds([[y1, x1], [y2, x2]])
-                
+                    
                 if 'Point' in name:
                     folium.GeoJson(
                         gdf, 
                         name=name, 
                         tooltip=folium.features.GeoJsonTooltip(
-                            fields=list(POINTS_DICT.keys()),
-                            aliases=list(POINTS_DICT.values()),
+                            fields=POINTS_DICT,
+                            aliases=POINTS_DICT,
                     )).add_to(m)
                 else:
                     folium.GeoJson(gdf, name=name).add_to(m)   
