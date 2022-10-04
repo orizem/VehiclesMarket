@@ -2,7 +2,7 @@
 Full Stack web application
 
 # Requirements
-### Purpose
+## Purpose
 Visualize the vehicles on responsive Heat Map. New user can upload his vehicles and they would be added to the Heat Map or just view and search vehicles.
 The Heat Map allows you to find out which areas have the most vehicles (red = many, green = less). The Heat map is available for all users, but to search vehilces manually, registration is required.
 ## Features - must
@@ -18,7 +18,7 @@ The Heat Map allows you to find out which areas have the most vehicles (red = ma
 ## Description
 FrontEnd with HTML, BackEnd with Flask (Python 3) and Database with SQLite (SQLAlchemy).
 The package 'website' contains the all application. The main file (main.py) imports website and the function create_app(app), which creates the package, the database and initializes the blueprints. The application is divided into 2 Blueprints: auth and views
-auth handles the operations: login, signup and logout.
+auth handles the operations: login, signup and logout. <br />
 views handles the operations: Display/Delete user profile, Upload/Delete vehicle, Search vehicles, Display analytics (Heat Map page).
 
 ## Database diagram
