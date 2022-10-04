@@ -17,7 +17,7 @@ The Heat Map allows you to find out which areas have the most vehicles (red = ma
 # Design
 ## Description
 FrontEnd with HTML, BackEnd with Flask (Python 3) and Database with SQLite (SQLAlchemy).
-The package 'website' contains the all application. The main file (main.py) imports website and the function create_app(app), which creates the package, the database and initializes the blueprints. The application is divided into 2 Blueprints: auth and views
+The package 'website' contains the all application. The main file (main.py) imports website and the function create_app(app), which creates the package, the database and initializes the blueprints. The application is divided into 2 Blueprints: auth and views. <br />
 auth handles the operations: login, signup and logout. <br />
 views handles the operations: Display/Delete user profile, Upload/Delete vehicle, Search vehicles, Display analytics (Heat Map page).
 
