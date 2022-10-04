@@ -21,6 +21,7 @@ from .create_map import CreateMap
 from .config import PROJECT_NAME, CITIES_DICT
 from .forms import ProfileForm, VehicleForm, SearchForm
 from werkzeug.utils import secure_filename
+from PIL import Image
 
 
 views = Blueprint('views', __name__)
@@ -62,14 +63,13 @@ def profile():
 def edit_profile():
     form = ProfileForm()
     user = User.query.filter_by(id=current_user.id).first()
+
     if form.validate_on_submit():
         # Update user's profile
         user.phone_number = form.phone_number.data
         user.state = form.state.data
         user.city = form.city.data
         user.gender = form.gender.data
-        user.profession = form.profession.data
-        user.addition_details = form.addition_details.data
         if not form.img.data:
             user.img = ''
             user.img_name = ''
@@ -78,8 +78,13 @@ def edit_profile():
             user.img_name = secure_filename(form.img.data.filename)
         db.session.commit()
         return redirect(url_for('views.profile'))
+    
+    form.phone_number.data = user.phone_number
+    form.state.data = user.state
+    form.city.data = user.city
+    form.gender.data = user.gender
 
-    return render_template('edit_profile.html', name='edit_profile', form=form)
+    return render_template('edit_profile.html', user=current_user, form=form)
 
 
 @views.route('/delete_profile', methods=['GET', 'POST'])
@@ -88,14 +93,12 @@ def delete_profile():
     # Search user in database
     user = User.query.filter_by(id=current_user.id).first()
     # Delete user profile
-    user.phone_number = None
-    user.state = None
-    user.city = None
-    user.gender = None
-    user.profession = None
-    user.addition_details = None
-    user.img = None
-    user.img_name = None
+    user.phone_number = ''
+    user.state = ''
+    user.city = ''
+    user.gender = ''
+    user.img = ''
+    user.img_name = ''
     db.session.commit()
     return redirect(url_for('views.profile'))
 
@@ -138,10 +141,25 @@ def delete_vehicle(id):
 
 
 @views.route('/search')
-@login_required
 def search():
     search_form = SearchForm()
-    return render_template('search.html', page='search', form=search_form)
+    return render_template('search.html', form=search_form)
+
+
+@views.route('/search/<int:id>')
+def display_vehicle(id):
+    # Search vehicle in database
+    vehicle = Vehicle.query.filter_by(id=id).first()
+    if vehicle:
+        if vehicle.img:
+            vehicle_img = base64.b64encode(vehicle.img).decode()  # Convert BLOB to binary 64
+        else:
+            vehicle_img = None
+        # Search user in database
+        user = User.query.filter_by(id=vehicle.user_id).first()
+        return render_template('display_vehicle.html', vehicle=vehicle, vehicle_img=vehicle_img, user=user)
+
+    return render_template('404.html')
 
 
 @views.route('/analytics')
@@ -176,19 +194,9 @@ def analytics():
 
     CreateMap([gdf, heat_data, merge_df], ['Polygon', 'Heat Map', 'Points'])
 
-    return render_template('analytics.html', page='analytics')
+    return render_template('analytics.html')
 
 
 @views.route('/map')
 def map():
-    return render_template('map.html', page='analytics')
-
-
-register = template.Library()
-
-
-def search_filter(df=None, col=0):
-    # return 'search filter is working'
-    df = df.sort_values(by=[df.columns[col]])
-    return df
-    # return render_template('search.html', name=current_user.name, page='search', vehicles=df)
+    return render_template('map.html')
