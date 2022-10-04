@@ -3,6 +3,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, PasswordField, SubmitField, TextAreaField, SelectField, FileField
 from wtforms.validators import Email, Length, DataRequired
+from .config import CITIES_DICT
 
 
 # Sign-up form
@@ -24,12 +25,10 @@ class SignupForm(FlaskForm):
 
 # Profile form
 class ProfileForm(FlaskForm):
-    phone_number = StringField('Phone Number', validators=[Length(10, 11)])
+    phone_number = StringField('Phone Number')
     state = StringField('State')
-    city = StringField('City')
-    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')])
-    profession = StringField('Profession')
-    addition_details = TextAreaField('Addition Details')
+    city = SelectField('City', choices=[(x['city'], x['city']) for x in CITIES_DICT])
+    gender = SelectField('Gender', choices=[('male', 'male'), ('female', 'female'), ('other', 'other')])
     img = FileField('Upload an image')
     submit = SubmitField('Submit')
 
@@ -51,5 +50,6 @@ class VehicleForm(FlaskForm):
 
 # Search Vehicle form
 class SearchForm(FlaskForm):
+    branch = StringField('Brand')
     model = StringField('Model')
     submit = SubmitField('Search')
