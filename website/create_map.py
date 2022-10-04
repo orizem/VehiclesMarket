@@ -1,3 +1,4 @@
+from tabnanny import check
 import folium
 from folium import plugins
 from folium.plugins import LocateControl
@@ -23,13 +24,14 @@ class CreateMap():
                 if 'Point' in name:
                     folium.GeoJson(
                         gdf, 
+                        show=False,
                         name=name, 
                         tooltip=folium.features.GeoJsonTooltip(
                             fields=POINTS_DICT,
                             aliases=POINTS_DICT,
                     )).add_to(m)
                 else:
-                    folium.GeoJson(gdf, name=name).add_to(m)   
+                    folium.GeoJson(gdf, name=name, show=False).add_to(m)   
                 
         folium.LayerControl().add_to(m)
         m.save(join(PROJECT_NAME, 'templates\map.html'))

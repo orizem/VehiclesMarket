@@ -143,7 +143,8 @@ def delete_vehicle(id):
 def search():
     search_form = SearchForm()
     vehicles = Vehicle.query.all()
-    def generate():
+
+    def generate(vehicles_):
         data = StringIO()
         w = csv.writer(data)
 
@@ -153,32 +154,58 @@ def search():
         data.seek(0)
         data.truncate(0)
 
-        for vehicle in vehicles:
-            w.writerow((f'http://localhost:5000/search/{vehicle.id}', vehicle.brand, vehicle.model, vehicle.year, vehicle.price, vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
+        for vehicle in vehicles_:
+            w.writerow((f'http://localhost:5000/search/{vehicle.id}', vehicle.brand, vehicle.model, vehicle.year, vehicle.price,
+             vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
             yield data.getvalue()
             data.seek(0)
             data.truncate(0)
-    
+
+    def get_vehicles():
+        return Vehicle.query.filter(Vehicle.brand.contains(search_form.brand.data),
+            Vehicle.model.contains(search_form.model.data),
+            # Vehicle.year >= int(search_form.from_year.data), Vehicle.year <= int(search_form.untill_year.data), # range of years
+            Vehicle.price >= price_min_price,  Vehicle.price <= price_max_price, # range of prices
+            Vehicle.condition.contains(search_form.condition.data),
+            Vehicle.transmission.contains(search_form.transmission.data),
+            Vehicle.km_driven >= km_min,  Vehicle.km_driven <= km_max, # range of km
+            Vehicle.fuel.contains(search_form.fuel.data),
+            Vehicle.capacity >= capacity_min,  Vehicle.capacity <= capacity_max, # range of capacities
+            ).all()
+
+    price_min_price, price_max_price = 0, 9e6
+    km_min, km_max = 0, 1e5
+    capacity_min, capacity_max = 0, 3e3
+
+    headers = ("brand", "model", "year","price", "condition", "transmission","km driven", "fuel", "capacity", "vehicle page")
+
     if search_form.validate_on_submit():
-        if search_form.submit.data:
-            res = Vehicle.query.filter(Vehicle.brand == search_form.brand.data,
-            Vehicle.model == search_form.model.data,
-            # Vehicle.year >= search_form.from_year.data,Vehicle.year <= search_form.untill_year.data, # range of years
-            # Vehicle.price <= search_form.price.data,
-            Vehicle.condition == search_form.condition.data,
-            Vehicle.transmission == search_form.transmission.data,
-            # Vehicle.km_driven <= search_form.km_driven.data,
-            Vehicle.fuel == search_form.fuel.data,
-            Vehicle.capacity == search_form.capacity.data).all()
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res)
+        price_min_price = min(request.form["fromSliderPrice"], request.form["toSliderPrice"])
+        price_max_price = max(request.form["fromSliderPrice"], request.form["toSliderPrice"])
+        
+        km_min = min(request.form["fromSliderKm"], request.form["toSliderKm"])
+        km_max = max(request.form["fromSliderKm"], request.form["toSliderKm"])
+        
+        capacity_min = min(request.form["fromSliderCapacity"], request.form["toSliderCapacity"])
+        capacity_max = max(request.form["fromSliderCapacity"], request.form["toSliderCapacity"])
+
+        if search_form.search.data:
+            # Get the correct range
+
+            res = get_vehicles()
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers,
+             slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
         if search_form.download.data:
-            response = Response(generate(), mimetype='text/csv')
-            # add a filename
+            res = get_vehicles()
+
+            response = Response(generate(res), mimetype='text/csv')
+            
             response.headers.set("Content-Disposition", "attachment", filename="vehicles.csv")
             return response
 
-    return render_template('search.html', form=search_form, vehicles=vehicles)
+    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, search_headers=headers,
+             slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
 
 @views.route('/search/<int:id>')
