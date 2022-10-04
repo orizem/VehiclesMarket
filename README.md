@@ -3,8 +3,10 @@ Full Stack web application
 
 # Requirements
 ## Purpose
-Visualize the vehicles on responsive Heat Map. New user can upload his vehicles and they would be added to the Heat Map or just view and search vehicles.
-The Heat Map allows you to find out which areas have the most vehicles (red = many, green = less). The Heat map is available for all users, but to search vehilces manually, registration is required.
+Visualize the vehicles on responsive Heat Map. <br />
+New user can upload his vehicles and they would be added to the Heat Map or just view and search vehicles. <br />
+The Heat Map allows you to find out which areas have the most vehicles (red = many, green = less). <br />
+The Heat map is available for all users, but to search vehilces manually, registration is required.
 ## Features - must
 1) Responsive Heat Map - 3 layers one on top of another (Polygon of Israel state, Heat map, Points of existing vehicles).
 2) Create and edit personal profile.
