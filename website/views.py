@@ -4,24 +4,23 @@
 # search - GET
 # analytics - GET
 
+import csv
+from io import StringIO
 import pandas as pd
 import geopandas as gpd
 import base64
 from . import db
 from .models import User, Vehicle
 from base64 import b64decode
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, Response, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
-from django import template
 from os.path import join
 import numpy as np
 from shapely.ops import unary_union
-from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME, CITIES_DICT
 from .forms import ProfileForm, VehicleForm, SearchForm
 from werkzeug.utils import secure_filename
-from PIL import Image
 
 
 views = Blueprint('views', __name__)
@@ -144,6 +143,29 @@ def delete_vehicle(id):
 def search():
     search_form = SearchForm()
     vehicles = Vehicle.query.filter_by(brand='Volkswagen').all()
+
+    def generate():
+        data = StringIO()
+        w = csv.writer(data)
+
+        # write header
+        w.writerow(('link','brand','model','year','price','condition','transmission','km_driven','fuel','capacity'))
+        yield data.getvalue()
+        data.seek(0)
+        data.truncate(0)
+
+        # write each log item
+        for vehicle in vehicles:
+            w.writerow((f'[http://localhost:5000/search/{vehicle.id}]', vehicle.brand, vehicle.model, vehicle.year, vehicle.price, vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
+            yield data.getvalue()
+            data.seek(0)
+            data.truncate(0)
+
+    response = Response(generate(), mimetype='text/csv')
+    # add a filename
+    response.headers.set("Content-Disposition", "attachment", filename="log.csv")
+    #return response  # activate to enable download, page will not be rendered
+
     return render_template('search.html', form=search_form, vehicles=vehicles)
 
 
