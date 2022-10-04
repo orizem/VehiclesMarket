@@ -33,7 +33,7 @@ def create_app():
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
 
-    from .views import search_filter, page_not_found
+    from .views import page_not_found
     # page not found
     app.register_error_handler(404, page_not_found)
 
@@ -44,7 +44,6 @@ def create_app():
     # blueprint for non-auth parts of app
     from .views import views as views_blueprint
     app.register_blueprint(views_blueprint)
-    app.jinja_env.globals.update(search_filter=search_filter)
 
     return app
 
