@@ -2,7 +2,7 @@
 Full Stack web application
 
 # Requirements
-## Purpose
+### Purpose
 Visualize the vehicles on responsive Heat Map. New user can upload his vehicles and they would be added to the Heat Map or just view and search vehicles.
 The Heat Map allows you to find out which areas have the most vehicles (red = many, green = less). The Heat map is available for all users, but to search vehilces manually, registration is required.
 ## Features - must
