@@ -148,15 +148,15 @@ def search():
 
 @views.route('/search/<int:id>')
 def display_vehicle(id):
+    # Search vehicle in database
     vehicle = Vehicle.query.filter_by(id=id).first()
     if vehicle:
-        vehicle_img = ''
         if vehicle.img:
             vehicle_img = base64.b64encode(vehicle.img).decode()  # Convert BLOB to binary 64
         else:
             vehicle_img = None
+        # Search user in database
         user = User.query.filter_by(id=vehicle.user_id).first()
-
         return render_template('display_vehicle.html', vehicle=vehicle, vehicle_img=vehicle_img, user=user)
 
     return render_template('404.html')
