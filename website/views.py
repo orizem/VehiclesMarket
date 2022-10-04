@@ -12,7 +12,7 @@ import base64
 from . import db
 from .models import User, Vehicle
 from base64 import b64decode
-from flask import Blueprint, Response, render_template, redirect, url_for, flash
+from flask import Blueprint, Response, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user
 from os.path import join
 import numpy as np
@@ -139,11 +139,10 @@ def delete_vehicle(id):
     return render_template('profile.home')
 
 
-@views.route('/search')
+@views.route('/search', methods=['GET', 'POST'])
 def search():
     search_form = SearchForm()
-    vehicles = Vehicle.query.filter_by(brand='Volkswagen').all()
-
+    vehicles = Vehicle.query.all()
     def generate():
         data = StringIO()
         w = csv.writer(data)
@@ -154,17 +153,30 @@ def search():
         data.seek(0)
         data.truncate(0)
 
-        # write each log item
         for vehicle in vehicles:
-            w.writerow((f'[http://localhost:5000/search/{vehicle.id}]', vehicle.brand, vehicle.model, vehicle.year, vehicle.price, vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
+            w.writerow((f'http://localhost:5000/search/{vehicle.id}', vehicle.brand, vehicle.model, vehicle.year, vehicle.price, vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
             yield data.getvalue()
             data.seek(0)
             data.truncate(0)
+    
+    if search_form.validate_on_submit():
+        if search_form.submit.data:
+            res = Vehicle.query.filter(Vehicle.brand == search_form.brand.data,
+            Vehicle.model == search_form.model.data,
+            # Vehicle.year >= search_form.from_year.data,Vehicle.year <= search_form.untill_year.data, # range of years
+            # Vehicle.price <= search_form.price.data,
+            Vehicle.condition == search_form.condition.data,
+            Vehicle.transmission == search_form.transmission.data,
+            # Vehicle.km_driven <= search_form.km_driven.data,
+            Vehicle.fuel == search_form.fuel.data,
+            Vehicle.capacity == search_form.capacity.data).all()
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res)
 
-    response = Response(generate(), mimetype='text/csv')
-    # add a filename
-    response.headers.set("Content-Disposition", "attachment", filename="log.csv")
-    #return response  # activate to enable download, page will not be rendered
+        if search_form.download.data:
+            response = Response(generate(), mimetype='text/csv')
+            # add a filename
+            response.headers.set("Content-Disposition", "attachment", filename="vehicles.csv")
+            return response
 
     return render_template('search.html', form=search_form, vehicles=vehicles)
 
