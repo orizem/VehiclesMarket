@@ -36,12 +36,12 @@ views handles the operations: Display/Delete user profile, Upload/Delete vehicle
 ![image](https://user-images.githubusercontent.com/58309185/193949036-d14bcd9f-6108-4ba0-b205-cb11d15cd891.png)
 
 # Deployment - run in CMD:
-** copy the lines below to cmd in this order!
-python -m set_up.py
-python -m pip install --upgrade pip
-python .\run_setup.py
-python -m venv env
-\venv\Scripts\activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt --force-reinstall
+** copy the lines below to cmd in this order! <br />
+python -m set_up.py <br />
+python -m pip install --upgrade pip <br />
+python .\run_setup.py <br />
+python -m venv env <br />
+\venv\Scripts\activate <br />
+python -m pip install --upgrade pip <br />
+python -m pip install -r requirements.txt --force-reinstall <br />
 python -m main
