@@ -1,0 +1,26 @@
+.search_table{
+    width:100%;
+    align-items:center;
+    text-align: left;
+}
+
+.search_th{
+    background-color:black;
+    border:solid 1px green;
+    text-align: left;
+    padding: 30px;
+    margin:30px;
+}
+
+.search_tr{
+    text-align: left;
+    padding: 30px;
+}
+
+.search_tr > * {
+    background-color:gray;
+    border:solid 1px green;
+    text-align: left;
+    padding: 30px;
+    margin:30px;
+}

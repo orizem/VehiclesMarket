@@ -14,7 +14,7 @@ import geopandas as gpd
 from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME
-from .forms import ProfileForm
+from .forms import ProfileForm,SearchForm
 from werkzeug.utils import secure_filename
 import base64
 
@@ -69,12 +69,26 @@ def edit_profile():
         return redirect(url_for('views.profile'))
     return render_template('edit_profile.html', name='edit_profile', form=form)
 
-@views.route('/search')
+@views.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    from .forms import SearchForm
-    search_form = SearchForm()
-    return render_template('search.html', page='search', form=search_form)
+    from .models import Vehicle
+    from . import db
+    s_f = SearchForm()
+    if s_f.validate_on_submit():
+        res = Vehicle.query.filter(Vehicle.brand == s_f.brand.data,
+        Vehicle.model == s_f.model.data,
+        Vehicle.year >= s_f.from_year.data,Vehicle.year <= s_f.untill_year.data, # range of years
+        Vehicle.price <= s_f.price.data,
+        Vehicle.condition == s_f.condition.data,
+        Vehicle.transmission == s_f.transmission.data,
+        Vehicle.km_driven <= s_f.km_driven.data,
+        Vehicle.fuel == s_f.fuel.data,
+        Vehicle.capacity == s_f.capacity.data).all()
+        headers = ("brand", "model", "year","price", "condition", "transmission","km driven", "fuel", "capacity")
+        return render_template('search.html', page='search', form=s_f, data=res, search_headers=headers)
+    else:
+        return render_template('search.html', page='search',form=s_f)
 
 @views.route('/analytics')
 def analytics():

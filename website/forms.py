@@ -1,8 +1,13 @@
 # This file is for Flask Forms: Login, SignUp
 
+from tkinter.ttk import Style
+from turtle import width
+
+# from traitlets import default
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, SubmitField, TextAreaField, SelectField, FileField
+from wtforms import StringField, BooleanField, PasswordField, SubmitField, TextAreaField, SelectField, FileField, IntegerField
 from wtforms.validators import Email, Length, DataRequired
+
 
 
 # Sign-up Flask form
@@ -34,5 +39,17 @@ class ProfileForm(FlaskForm):
 
 # Search Vehicle form
 class SearchForm(FlaskForm):
+    brand = StringField('Brand')
     model = StringField('Model')
-    submit = SubmitField('Search')
+    from_year = SelectField(u'From year', choices = range(2000,2023,1), default =2000)
+    untill_year = SelectField(u'Untill year', choices = range(2023,2000,-1), default =2023)
+    price = IntegerField('price (up to)')
+    condition = SelectField(u'Condition', choices = ("excellent","good","normal","bad"), default = "excellent")
+    transmission = SelectField(u'Transmission', choices = ("automatic","mannual"), default = "automatic")
+    km_driven = IntegerField('Km driven',default = -1)
+    fuel = SelectField(u'Fuel', choices = ("Petrol","Petrol 98","Diesel"), default = "Petrol")
+    capacity = IntegerField('Capacity')
+    submit = SubmitField('Submit')
+    # img = db.Column(db.String(500))
+    # img_name = db.Column(db.String(500))
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
