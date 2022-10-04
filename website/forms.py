@@ -52,13 +52,8 @@ class VehicleForm(FlaskForm):
 class SearchForm(FlaskForm):
     brand = StringField('Brand')
     model = StringField('Model')
-    # from_year = SelectField(u'From year', choices = range(2000,2023,1), default =2000)
-    # year = SelectField('Year', choices = range(2023,2000,-1), default =2023)
-    # price = StringField('price (up to)')
     condition = SelectField(u'Condition', choices = ("","excellent","good","normal","bad"), default = "")
     transmission = SelectField(u'Transmission', choices = ("","automatic","mannual"), default = "")
-    # km_driven = StringField('Km driven',default = -1)
     fuel = StringField('Fuel')
-    # capacity = StringField('Capacity')
     search = SubmitField('Search')
     download = SubmitField('CSV')
