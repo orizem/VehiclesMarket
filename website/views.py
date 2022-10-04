@@ -143,7 +143,8 @@ def delete_vehicle(id):
 @views.route('/search')
 def search():
     search_form = SearchForm()
-    return render_template('search.html', form=search_form)
+    vehicles = Vehicle.query.filter_by(brand='Volkswagen').all()
+    return render_template('search.html', form=search_form, vehicles=vehicles)
 
 
 @views.route('/search/<int:id>')

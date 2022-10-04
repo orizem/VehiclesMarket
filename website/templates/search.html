@@ -19,6 +19,9 @@
           {% endwith %}
       
       {{ wtf.quick_form(form) }}
+      {% for vehicle in vehicles %}
+        <button onclick="location.href = '/search/{{ vehicle.id }}';">vehicle id:{{ vehicle.id }}</button>
+      {% endfor %}
   </div>
 </div>
 {% endblock %}
