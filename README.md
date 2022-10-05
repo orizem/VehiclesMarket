@@ -45,7 +45,8 @@ views handles the operations: Display/Delete user profile, Upload/Delete vehicle
 ** copy the lines below to cmd in this order! <br />
 python -m set_up.py <br />
 python -m pip install --upgrade pip <br />
-python .\run_setup.py <br />
+![Requirements_FIona_GDAL](https://user-images.githubusercontent.com/58309185/194172318-833268ed-28a3-4111-a615-d43a038b5e36.png)
+
 python -m venv env <br />
 \venv\Scripts\activate <br />
 python -m pip install --upgrade pip <br />
