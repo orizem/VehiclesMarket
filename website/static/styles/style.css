@@ -48,3 +48,22 @@
 .contant_box_404 {
     margin-top: 50px;
 }
+
+.readme {
+    background: rgba(26,26,26,0.8);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    text-align: left;
+}
+
+.readme li {
+    padding: 3px;
+    margin: 3px;
+    border-radius: 0px;
+    margin-left: 20px;
+}
+
+.readme img {
+    width: fit-content;
+}

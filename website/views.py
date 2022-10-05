@@ -37,7 +37,7 @@ def page_not_found(e):
 
 @views.route('/')
 def index():
-    return render_template('index.html', page='home')
+    return render_template('README.html', page='home')
 
 
 @views.route('/profile')
