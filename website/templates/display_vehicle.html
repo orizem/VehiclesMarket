@@ -15,7 +15,7 @@
     <div class="row g-0">
       <!-- Left col -->
       <div class="col-md-3">
-        {% if vehicle.img != none %}
+        {% if vehicle_img != none %}
           <img src="data:image/jpeg;base64, {{ vehicle_img }}" class="img-fluid rounded-start">
         {% else %}
           <img src="{{ url_for('static', filename='images/default_vehicle_img.jpg') }}" class="img-fluid rounded-start">
