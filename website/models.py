@@ -15,8 +15,6 @@ class User(UserMixin, db.Model):
     state = db.Column(db.String(50))
     city = db.Column(db.String(50))
     gender = db.Column(db.String(10))
-    profession = db.Column(db.String(50))
-    addition_details = db.Column(db.Text)
     img = db.Column(db.String(500))
     img_name = db.Column(db.String(500))
     vehicles = db.relationship('Vehicle') # One to many

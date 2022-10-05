@@ -8,6 +8,7 @@
     # 3. Points - each points is a vehicle (specified by the city of the user)
 # 3) Search - Search box to find the owner of the Vehicle (with contact details)
 
+
 import pandas as pd
 import geopandas as gpd
 import base64
