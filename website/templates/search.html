@@ -39,8 +39,8 @@
     {{ form.hidden_tag() }}
 
     <tr>
-      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name not in ['search','download'])
-      %}
+      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name not in
+      ['search','table_size','sort_by','sort_type','download','clear']) and not 'Sort' in subfield.name and not 'Btn' in subfield.name %}
       <td>
         {{ wtf.form_field(subfield, placeholder=subfield.name) }}
       </td>
@@ -49,10 +49,12 @@
       <td>
         <div class="range_container">
           <div class="sliders_control">
-            <input id="fromSliderPrice" name="fromSliderPrice" type="range" value="{{ slider_min_price }}" min="0" max="9000000" />
-            <p class="form_control_container__time__input" id="fromInputPrice">Min price: {{ slider_min }}</p>
-            <input id="toSliderPrice" name="toSliderPrice" type="range" value="{{ slider_max_price }}" min="0" max="9000000" />
-            <p class="form_control_container__time__input" id="toInputPrice">Max price: {{ slider_max }}</p> 
+            <input id="fromSliderPrice" name="fromSliderPrice" type="range" value="{{ slider_min_price }}" min="0"
+              max="900000" />
+            <p class="form_control_container__time__input" id="fromInputPrice">Min price: {{ slider_min_price }}</p>
+            <input id="toSliderPrice" name="toSliderPrice" type="range" value="{{ slider_max_price }}" min="0"
+              max="900000" />
+            <p class="form_control_container__time__input" id="toInputPrice">Max price: {{ slider_max_price }}</p>
           </div>
         </div>
       </td>
@@ -60,10 +62,11 @@
       <td>
         <div class="range_container">
           <div class="sliders_control">
-            <input id="fromSliderKm" name="fromSliderKm" type="range" value="{{ slider_min_km }}" min="0" max="100000" />
+            <input id="fromSliderKm" name="fromSliderKm" type="range" value="{{ slider_min_km }}" min="0"
+              max="100000" />
             <p class="form_control_container__time__input" id="fromInputKm">Min km: {{ slider_min_km }}</p>
             <input id="toSliderKm" name="toSliderKm" type="range" value="{{ slider_max_km }}" min="0" max="100000" />
-            <p class="form_control_container__time__input" id="toInputKm">Max km: {{ slider_max_km }}</p> 
+            <p class="form_control_container__time__input" id="toInputKm">Max km: {{ slider_max_km }}</p>
           </div>
         </div>
       </td>
@@ -71,56 +74,80 @@
       <td>
         <div class="range_container">
           <div class="sliders_control">
-            <input id="fromSliderCapacity" name="fromSliderCapacity" type="range" value="{{ slider_min_capacity }}" min="0" max="3000" />
-            <p class="form_control_container__time__input" id="fromInputCapacity">Min capacity: {{ slider_min_capacity }}</p>
-            <input id="toSliderCapacity" name="toSliderCapacity" type="range" value="{{ slider_max_capacity }}" min="0" max="3000" />
-            <p class="form_control_container__time__input" id="toInputCapacity">Max capacity: {{ slider_max_capacity }}</p> 
+            <input id="fromSliderCapacity" name="fromSliderCapacity" type="range" value="{{ slider_min_capacity }}"
+              min="0" max="3000" />
+            <p class="form_control_container__time__input" id="fromInputCapacity">Min capacity: {{ slider_min_capacity
+              }}</p>
+            <input id="toSliderCapacity" name="toSliderCapacity" type="range" value="{{ slider_max_capacity }}" min="0"
+              max="3000" />
+            <p class="form_control_container__time__input" id="toInputCapacity">Max capacity: {{ slider_max_capacity }}
+            </p>
           </div>
         </div>
       </td>
 
-      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name in ['search','download']) %}
-      <td>
+      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name in ['search', 'clear']) %}
+      <td class="table_features">
         {{ wtf.form_field(subfield, placeholder=subfield.name) }}
       </td>
       {% endfor %}
+
     </tr>
   </table>
-</form>
-<div class="container">
-  <div class="row" style="margin-bottom: 10px;">
-    <div class="table_length col-lg-6">Total vehicles: {{ data|length }}</div>
-    <div class="download_csv col-lg-6">{{ wtf.form_field(form.download) }}</div>
-  </div>
-</div>
-<table id="datatable" class="table table-striped table-dark">
-  <thead class="table-light">
-    <tr>
-      {% for header in search_headers %}
-      <th class="search_th">{{ header }}</th>
-      {% endfor %}
-    </tr>
-  </thead>
-  <tbody>
-    {% for row in data %}
-    <tr class="search_tr">
-      <td> {{row.brand}}</td>
-      <td> {{row.model}}</td>
-      <td> {{row.year}}</td>
-      <td> {{row.price}}</td>
-      <td> {{row.condition}}</td>
-      <td> {{row.transmission}}</td>
-      <td> {{row.km_driven}}</td>
-      <td> {{row.fuel}}</td>
-      <td> {{row.capacity}}</td>
-      <td><a href='/search/{{ row.id }}' style="text-decoration: none;">
-          Check this
-          <img srcset="https://img.icons8.com/arcade/344/experimental-car-arcade.png" alt="icon" loading="lazy"
-            style="width: 32px; height: 32px;">
-        </a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
 
+  {{ form.hidden_tag() }}
+  <div class="container">
+    <div class="row" style="margin-bottom: 10px;">
+      <div class="table_features col-lg-6">Total vehicles: {{ data|length }}</div>
+      <input class="table_features col-lg-6" id="page" name="page" value="{{ page_table }}" size="1" readonly/>
+      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name in ['nextBtn','prevBtn']) %}
+      <div class="table_features col-lg-6">{{ wtf.form_field(subfield, placeholder=subfield.name) }}</div>
+      {% endfor %}
+      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name in ['table_size','sort_by','sort_type']) %}
+      <div class="table_features col-lg-6">{{ wtf.form_field(subfield, placeholder=subfield.name) }}</div>
+      {% endfor %}
+      {% for subfield in form if (subfield.widget.input_type != 'hidden' and subfield.name in ['download']) %}
+      <div class="table_features col-lg-6">
+        {{ wtf.form_field(subfield, placeholder=subfield.name) }}
+        <br/>
+        <input type="checkbox" id="csv_checkbox" name="csv_checkbox" {% if checkbox != "None" %} checked {% endif %}>
+        <label for="csv_checkbox">Download all</label>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <table id="datatable" class="table table-striped table-dark">
+    <thead class="table-light">
+      <tr>
+        {% for subfield in form if (subfield.widget.input_type != 'hidden' and 'Sort' in subfield.name ) %}
+        <th class="search_th noHover">{{ wtf.form_field(subfield, placeholder=subfield.name) }}</th>
+        {% endfor %}
+        <th class="search_th">
+          <input class="btn btn-default noHover" type="" value="vehicle page">
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data[page_table*size_table:(page_table+1)*size_table] %}
+      <tr class="search_tr">
+        <td> {{row.brand}}</td>
+        <td> {{row.model}}</td>
+        <td> {{row.year}}</td>
+        <td> {{row.price}}</td>
+        <td> {{row.condition}}</td>
+        <td> {{row.transmission}}</td>
+        <td> {{row.km_driven}}</td>
+        <td> {{row.fuel}}</td>
+        <td> {{row.capacity}}</td>
+        <td><a href='/search/{{ row.id }}' style="text-decoration: none;">
+            Check this
+            <img srcset="https://img.icons8.com/arcade/344/experimental-car-arcade.png" alt="icon" loading="lazy"
+              style="width: 32px; height: 32px;">
+          </a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
 {% endblock %}
