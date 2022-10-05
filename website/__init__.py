@@ -1,7 +1,6 @@
 # init.py
 
 from flask import Flask
-from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 from flask_bootstrap import Bootstrap
@@ -18,7 +17,6 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-    app.config['SESSION_TYPE'] = 'filesystem'
 
     db.init_app(app)
     bootstrap.init_app(app)
@@ -30,8 +28,6 @@ def create_app():
     from .models import User
 
     create_database(app)
-
-    Session(app)
 
     @login_manager.user_loader
     def load_user(user_id):
