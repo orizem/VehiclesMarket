@@ -11,35 +11,49 @@
             </div>
         {% endif %}
     {% endwith %}
-    <div class="col-lg-6">
-        <div class="card-group">
-            <div class="card"> <!-- Card image -->
-                {% if vehicle_img != none %}
-                    <img src="data:image/jpeg;base64, {{ vehicle_img }}" class="card-img-top">
-                {% else %}
-                    <img src="{{ url_for('static', filename='images/default_vehicle_img.jpg') }}" class="card-img-top">
-                {% endif %}
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><span class="bold_text">Brand: </span> {{ vehicle.brand }} </li>
-                        <li class="list-group-item"><span class="bold_text">Model: </span> {{ vehicle.model }} </li>
-                        <li class="list-group-item"><span class="bold_text">Year: </span> {{ vehicle.year }} </li>
-                        <li class="list-group-item"><span class="bold_text">Price: </span> {{ vehicle.price }} </li>
-                        <li class="list-group-item"><span class="bold_text">Condition: </span> {{ vehicle.condition }} </li>
-                        <li class="list-group-item"><span class="bold_text">Transmission: </span> {{ vehicle.transmission }} </li>
-                        <li class="list-group-item"><span class="bold_text">Fuel: </span> {{ vehicle.fuel }} </li>
-                        <li class="list-group-item"><span class="bold_text">Capacity: </span> {{ vehicle.capacity }} </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <h5>Contact info</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><span class="bold_text">Phone: </span> {{ user.phone_number }} </li>
-                        <li class="list-group-item"><span class="bold_text">Email: </span> {{ user.email }} </li>
-                        <li class="list-group-item"><span class="bold_text">Name: </span> {{ user.full_name }} </li>
-                    </ul>
-                </div>
-            </div>
+  <div class="card mb-0" style="max-width: 90%; margin: auto;">
+    <div class="row g-0">
+      <!-- Left col -->
+      <div class="col-md-3">
+        {% if vehicle_img != none %}
+          <img src="data:image/jpeg;base64, {{ vehicle_img }}" class="img-fluid rounded-start">
+        {% else %}
+          <img src="{{ url_for('static', filename='images/default_vehicle_img.jpg') }}" class="img-fluid rounded-start">
+        {% endif %}
+      </div>
+      <!-- Second left col -->
+      <div class="col-md-2">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><span class="bold_text">Brand: </span> {{ vehicle.brand }} </li>
+            <li class="list-group-item"><span class="bold_text">Model: </span> {{ vehicle.model }} </li>
+            <li class="list-group-item"><span class="bold_text">Year: </span> {{ vehicle.year }} </li>
+            <li class="list-group-item"><span class="bold_text">Price: </span> {{ vehicle.price }} </li>
+          </ul>
         </div>
+      </div>
+      <!-- Second right col -->
+      <div class="col-md-3">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><span class="bold_text">Condition: </span> {{ vehicle.condition }} </li>
+            <li class="list-group-item"><span class="bold_text">Transmission: </span> {{ vehicle.transmission }} </li>
+            <li class="list-group-item"><span class="bold_text">Fuel: </span> {{ vehicle.fuel }} </li>
+            <li class="list-group-item"><span class="bold_text">Capacity: </span> {{ vehicle.capacity }} </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Right col -->
+      <div class="col-md-4">
+        <div class="card-body">
+          <h5>Contact info</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><span class="bold_text">Name: </span> {{ user.full_name }} </li>
+            <li class="list-group-item"><span class="bold_text">Email: </span> {{ user.email }} </li>
+            <li class="list-group-item"><span class="bold_text">Phone: </span> {{ user.phone_number }} </li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
