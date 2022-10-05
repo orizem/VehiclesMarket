@@ -8,24 +8,24 @@
     # 3. Points - each points is a vehicle (specified by the city of the user)
 # 3) Search - Search box to find the owner of the Vehicle (with contact details)
 
+import csv
+from io import StringIO
 import pandas as pd
 import geopandas as gpd
 import base64
 from . import db
 from .models import User, Vehicle
 from base64 import b64decode
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, Response, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user
-from django import template
 from os.path import join
 import numpy as np
 from shapely.ops import unary_union
-from .templatetags.test import search_filter
 from .create_map import CreateMap
 from .config import PROJECT_NAME, CITIES_DICT
 from .forms import ProfileForm, VehicleForm, SearchForm
 from werkzeug.utils import secure_filename
-from PIL import Image
+import math
 
 
 views = Blueprint('views', __name__)
@@ -142,7 +142,131 @@ def delete_vehicle(id):
 @views.route('/search', methods=['GET', 'POST'])
 def search():
     search_form = SearchForm()
-    return render_template('search.html', form=search_form, page='search')
+    vehicles = Vehicle.query.all()
+    
+    sort_model = None
+
+    def get_model(model_name):
+        if model_name == 'brand':
+            return Vehicle.brand
+        elif model_name == 'model':
+            return Vehicle.model
+        elif model_name == 'year':
+            return Vehicle.year
+        elif model_name == 'price':
+            return Vehicle.price
+        elif model_name == 'condition':
+            return Vehicle.condition
+        elif model_name == 'transmission':
+            return Vehicle.transmission
+        elif model_name == 'km_driven':
+            return Vehicle.km_driven
+        elif model_name == 'fuel':
+            return Vehicle.fuel
+        elif model_name == 'capacity':
+            return Vehicle.capacity
+
+    if search_form.sort_by.data:
+        sort_model = get_model(search_form.sort_by.data)
+
+    def generate(vehicles_):
+        data = StringIO()
+        w = csv.writer(data)
+
+        # write header
+        w.writerow(('link','brand','model','year','price','condition','transmission','km_driven','fuel','capacity'))
+        yield data.getvalue()
+        data.seek(0)
+        data.truncate(0)
+
+        for vehicle in vehicles_:
+            w.writerow((f'http://localhost:5000/search/{vehicle.id}', vehicle.brand, vehicle.model, vehicle.year, vehicle.price,
+             vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
+            yield data.getvalue()
+            data.seek(0)
+            data.truncate(0)
+
+    def get_vehicles():
+        _vehicles = Vehicle.query.filter(Vehicle.brand.contains(search_form.brand.data),
+            Vehicle.model.contains(search_form.model.data),
+            # Vehicle.year >= int(search_form.from_year.data), Vehicle.year <= int(search_form.untill_year.data), # range of years
+            Vehicle.price >= price_min_price,  Vehicle.price <= price_max_price, # range of prices
+            Vehicle.condition.contains(search_form.condition.data),
+            Vehicle.transmission.contains(search_form.transmission.data),
+            Vehicle.km_driven >= km_min,  Vehicle.km_driven <= km_max, # range of km
+            Vehicle.fuel.contains(search_form.fuel.data),
+            Vehicle.capacity >= capacity_min,  Vehicle.capacity <= capacity_max, # range of capacities
+            )
+        if sort_model:
+            if search_form.sort_type.data == 'ASC':
+                return _vehicles.order_by(sort_model.asc()).all() 
+            return _vehicles.order_by(sort_model.desc()).all()
+        return _vehicles.all()
+
+    page_table, size_table = 0, 10
+    price_min_price, price_max_price = 0, 9e5
+    km_min, km_max = 0, 1e5
+    capacity_min, capacity_max = 0, 3e3
+    checkbox = "None"
+
+    headers = ("brand", "model", "year","price", "condition", "transmission","km driven", "fuel", "capacity", "vehicle page")
+
+    if search_form.validate_on_submit():
+        if search_form.clear.data:
+            search_form.brand.data = None
+            search_form.model.data = None
+            search_form.condition.data = ""
+            search_form.transmission.data = ""
+            search_form.fuel.data = None
+            search_form.table_size.data = "10"
+            search_form.sort_by.data = ""
+            search_form.sort_type.data = "ASC"
+            checkbox = "None"
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+                slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
+
+        price_min_price = min(int(request.form["fromSliderPrice"]), int(request.form["toSliderPrice"]))
+        price_max_price = max(int(request.form["fromSliderPrice"]), int(request.form["toSliderPrice"]))
+
+        km_min = min(int(request.form["fromSliderKm"]), int(request.form["toSliderKm"]))
+        km_max = max(int(request.form["fromSliderKm"]), int(request.form["toSliderKm"]))
+        
+        capacity_min = min(int(request.form["fromSliderCapacity"]), int(request.form["toSliderCapacity"]))
+        capacity_max = max(int(request.form["fromSliderCapacity"]), int(request.form["toSliderCapacity"]))
+
+        checkbox = f"{request.form.get('csv_checkbox')}"
+
+        res = get_vehicles()
+        page_table = int(request.form["page"])
+        size_table = int(search_form.table_size.data)
+        page_table = page_table if page_table < math.ceil(len(res)/size_table)-1 else math.ceil(len(res)/size_table)-1
+
+        if search_form.search.data:
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+                slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
+
+        if search_form.download.data:
+            if checkbox=="None":
+                res = res[page_table*size_table:(page_table+1)*size_table]
+
+            response = Response(generate(res), mimetype='text/csv')
+            response.headers.set("Content-Disposition", "attachment", filename="vehicles.csv")
+            return response
+
+        if search_form.prevBtn.data:
+            if page_table > 0:
+                page_table -= 1
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+                slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
+
+        if search_form.nextBtn.data:
+            if page_table < math.ceil(len(res)/size_table)-1:
+                page_table += 1
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+                slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
+
+    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+             slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
 
 @views.route('/search/<int:id>')

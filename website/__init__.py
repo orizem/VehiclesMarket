@@ -1,9 +1,11 @@
 # init.py
 
 from flask import Flask
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 from flask_bootstrap import Bootstrap
+
 from .config import SECRET_KEY, SQLALCHEMY_DATABASE_URI, DB_NAME
 from os import path
 
@@ -16,6 +18,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+    app.config['SESSION_TYPE'] = 'filesystem'
 
     db.init_app(app)
     bootstrap.init_app(app)
@@ -28,12 +31,14 @@ def create_app():
 
     create_database(app)
 
+    Session(app)
+
     @login_manager.user_loader
     def load_user(user_id):
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
 
-    from .views import search_filter, page_not_found
+    from .views import page_not_found
     # page not found
     app.register_error_handler(404, page_not_found)
 
@@ -44,7 +49,6 @@ def create_app():
     # blueprint for non-auth parts of app
     from .views import views as views_blueprint
     app.register_blueprint(views_blueprint)
-    app.jinja_env.globals.update(search_filter=search_filter)
 
     return app
 
