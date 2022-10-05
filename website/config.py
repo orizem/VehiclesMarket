@@ -7,6 +7,8 @@ SQLALCHEMY_DATABASE_URI = f'sqlite:///{DB_NAME}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 WEBSITE_PATH = os.path.abspath(PROJECT_NAME)
 
+POINTS_DICT = ['brand', 'model', 'year', 'price', 'condition', 'transmission', 'km_driven', 'fuel', 'capacity', 'lat', 'lng'] 
+
 CITIES_DICT = [
     {'city':'Jerusalem', 'lat':31.7833 , 'lng':35.2167},
     {'city':'Tel Aviv-Yafo', 'lat':32.08 , 'lng':34.78},

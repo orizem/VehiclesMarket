@@ -146,6 +146,7 @@ def search():
     
     sort_model = None
 
+    # Returns the requested model to order by it
     def get_model(model_name):
         if model_name == 'brand':
             return Vehicle.brand
@@ -169,7 +170,8 @@ def search():
     if search_form.sort_by.data:
         sort_model = get_model(search_form.sort_by.data)
 
-    def generate(vehicles_):
+    # Create csv file of the given table by the search parameters
+    def generate_csv(vehicles_):
         data = StringIO()
         w = csv.writer(data)
 
@@ -179,6 +181,7 @@ def search():
         data.seek(0)
         data.truncate(0)
 
+        # Write each row to the csv file
         for vehicle in vehicles_:
             w.writerow((f'http://localhost:5000/search/{vehicle.id}', vehicle.brand, vehicle.model, vehicle.year, vehicle.price,
              vehicle.condition, vehicle.transmission, vehicle.km_driven, vehicle.fuel, vehicle.capacity))
@@ -186,6 +189,7 @@ def search():
             data.seek(0)
             data.truncate(0)
 
+    # Returs list of vehicles by the search parameters
     def get_vehicles():
         _vehicles = Vehicle.query.filter(Vehicle.brand.contains(search_form.brand.data),
             Vehicle.model.contains(search_form.model.data),
@@ -197,21 +201,23 @@ def search():
             Vehicle.fuel.contains(search_form.fuel.data),
             Vehicle.capacity >= capacity_min,  Vehicle.capacity <= capacity_max, # range of capacities
             )
+        # In case column to sort was selected, sort by this col
         if sort_model:
             if search_form.sort_type.data == 'ASC':
                 return _vehicles.order_by(sort_model.asc()).all() 
             return _vehicles.order_by(sort_model.desc()).all()
         return _vehicles.all()
 
+    # ========== Initializes ==========
     page_table, size_table = 0, 10
     price_min_price, price_max_price = 0, 9e5
     km_min, km_max = 0, 1e5
     capacity_min, capacity_max = 0, 3e3
     checkbox = "None"
-
-    headers = ("brand", "model", "year","price", "condition", "transmission","km driven", "fuel", "capacity", "vehicle page")
+    # ========== End of Initializes ==========
 
     if search_form.validate_on_submit():
+        # Handle clear button pressed
         if search_form.clear.data:
             search_form.brand.data = None
             search_form.model.data = None
@@ -222,9 +228,10 @@ def search():
             search_form.sort_by.data = ""
             search_form.sort_type.data = "ASC"
             checkbox = "None"
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox,
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
+        # ========== Initializes for submit ==========
         price_min_price = min(int(request.form["fromSliderPrice"]), int(request.form["toSliderPrice"]))
         price_max_price = max(int(request.form["fromSliderPrice"]), int(request.form["toSliderPrice"]))
 
@@ -241,32 +248,37 @@ def search():
         size_table = int(search_form.table_size.data)
         page_table = page_table if page_table < math.ceil(len(res)/size_table)-1 else math.ceil(len(res)/size_table)-1
         page_table = (page_table >= 0)*page_table
+        # ========== End of Initializes for submit ==========
 
+        # Handle search button pressed
         if search_form.search.data:
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
+        # Handle download button pressed
         if search_form.download.data:
             if checkbox=="None":
                 res = res[page_table*size_table:(page_table+1)*size_table]
 
-            response = Response(generate(res), mimetype='text/csv')
+            response = Response(generate_csv(res), mimetype='text/csv')
             response.headers.set("Content-Disposition", "attachment", filename="vehicles.csv")
             return response
-
+        
+        # Handle previous button pressed
         if search_form.prevBtn.data:
             if page_table > 0:
                 page_table -= 1
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
+        # Handle next button pressed
         if search_form.nextBtn.data:
             if page_table < math.ceil(len(res)/size_table)-1:
                 page_table += 1
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
-    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
+    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox,
              slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
 
@@ -296,26 +308,31 @@ def analytics():
     users_df = gpd.GeoDataFrame([{'id':u.id, 'city':u.city} for u in users])
     vehicles_df = gpd.GeoDataFrame([{'id':v.id, 'brand':v.brand, 'model':v.model, 'year':v.year, 'price':v.price, 'condition':v.condition, 'transmission':v.transmission,
                                      'km_driven':v.km_driven, 'fuel':v.fuel, 'capacity':v.capacity, 'img':v.img, 'img_name':v.img_name, 'user_id':v.user_id} for v in vehicles])
-    merge_df = pd.merge(vehicles_df, users_df, left_on='user_id', right_on='id', how='left')
+    merge_df = pd.merge(vehicles_df, users_df, left_on='user_id', right_on='id', how='left')    # Merge vehicles with users inorder to have city in vehicle
     
     merge_df['lat'] = 0.0
     merge_df['lng'] = 0.0
     
+    # Set Latitude and Longtitude by city
     for x in CITIES_DICT:
         merge_df.loc[merge_df['city'] == x['city'], 'lat'] = x['lat']
         merge_df.loc[merge_df['city'] == x['city'], 'lng'] = x['lng']
-        
+
+    # Spreading the points inside the city  
     merge_df['lat'] = merge_df['lat'] + np.random.uniform(-0.05, 0.05, len(merge_df))
     merge_df['lng'] = merge_df['lng'] + np.random.uniform(-0.1, 0.1, len(merge_df))
     
+    # Modifies to get the final result
     merge_df = merge_df.drop(columns=['img','img_name','user_id','id_y'])
     merge_df.columns = ['id'] + list(merge_df.columns[1:])
     merge_df = gpd.GeoDataFrame(merge_df, geometry=gpd.points_from_xy(merge_df['lng'], merge_df['lat']))
     merge_df = merge_df[merge_df['geometry'].within(gdf.unary_union)]
     merge_df.crs = gdf.crs
     
+    # Heat map data
     heat_data = [[point.xy[1][0], point.xy[0][0]] for point in merge_df.geometry]
 
+    # Generating map by given layears
     CreateMap([gdf, heat_data, merge_df], ['Polygon', 'Heat Map', 'Points'])
 
     return render_template('analytics.html')
