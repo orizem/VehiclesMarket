@@ -240,6 +240,7 @@ def search():
         page_table = int(request.form["page"])
         size_table = int(search_form.table_size.data)
         page_table = page_table if page_table < math.ceil(len(res)/size_table)-1 else math.ceil(len(res)/size_table)-1
+        page_table = (page_table >= 0)*page_table
 
         if search_form.search.data:
             return render_template('search.html', form=search_form, vehicles=vehicles, data=res, search_headers=headers, page_table=page_table, size_table=size_table, checkbox=checkbox,
