@@ -72,7 +72,7 @@ class SearchForm(FlaskForm):
     fuelSort = SubmitField('fuel')
     capacitySort = SubmitField('capacity')
     sort_by = SelectField(u'Sort By', choices = ("","brand","model","year","price","condition","transmission","driven","fuel","capacity"), default = "")
-    sort_type = SelectField(u'Sort Type', choices = ("ASC","DESC"), default = "10")
+    sort_type = SelectField(u'Sort Type', choices = ("ASC","DESC"), default = "ASC")
 
 
 "year","price","condition","transmission","driven","fuel","capacity"
