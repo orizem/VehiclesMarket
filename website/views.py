@@ -1,8 +1,12 @@
-# This file handles all routes to pages like: profile, analytics
-# profile - GET
-# edit_profile - GET, POST
-# search - GET
-# analytics - GET
+# This file handles the routes of: 
+# 1) Profile - User and Vehicles.
+    # The operations enabled are: create or edit or delete a profile, upload or delete a vehicle.
+# 2) Analytics - Responsive Heatmap. 
+    # There are 3 layers one on top of another:
+    # 1. Polygon of Israel state in blue
+    # 2. Heat Map
+    # 3. Points - each points is a vehicle (specified by the city of the user)
+# 3) Search - Search box to find the owner of the Vehicle (with contact details)
 
 import pandas as pd
 import geopandas as gpd
@@ -55,7 +59,7 @@ def profile():
             else:
                 vehicle.img = None
 
-    return render_template('profile.html', user=user, profile_img=profile_img, vehicles=vehicles)
+    return render_template('profile.html', user=user, page='profile', profile_img=profile_img, vehicles=vehicles)
 
 
 @views.route('/edit_profile', methods=['GET', 'POST'])
@@ -79,6 +83,7 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for('views.profile'))
     
+    # Update values of the form
     form.phone_number.data = user.phone_number
     form.state.data = user.state
     form.city.data = user.city
@@ -109,17 +114,11 @@ def upload_vehicle():
     form = VehicleForm()
     if form.validate_on_submit():
         uploaded_img = form.img.data
-        if not uploaded_img:
-            vehicle_img = ''
-            vehicle_img_filename = ''
-        else:
-            vehicle_img = uploaded_img
-            vehicle_img_filename = secure_filename(form.img.data.filename)
-
         # Add a Vehicle
         vehicle_to_add = Vehicle(brand=form.brand.data, model=form.model.data, year=form.year.data, price=form.price.data, 
                                 condition=form.condition.data, transmission=form.transmission.data, km_driven=form.km_driven.data, 
-                                fuel=form.fuel.data, capacity=form.capacity.data, img=uploaded_img.read(), img_name=vehicle_img_filename, user_id=current_user.id)
+                                fuel=form.fuel.data, capacity=form.capacity.data, img=uploaded_img.read(), img_name=secure_filename(uploaded_img.filename), 
+                                user_id=current_user.id)
         db.session.add(vehicle_to_add)
         db.session.commit()
         return redirect(url_for('views.profile'))
@@ -140,10 +139,10 @@ def delete_vehicle(id):
     return render_template('profile.home')
 
 
-@views.route('/search')
+@views.route('/search', methods=['GET', 'POST'])
 def search():
     search_form = SearchForm()
-    return render_template('search.html', form=search_form)
+    return render_template('search.html', form=search_form, page='search')
 
 
 @views.route('/search/<int:id>')
