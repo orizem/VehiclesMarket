@@ -5,22 +5,22 @@ Full Stack web application
 ## Purpose
 Visualize the vehicles on responsive Heat Map. <br />
 New user can upload his vehicles and they would be added to the Heat Map or merely observe and search for vehicles. <br />
-The Heat Map allows you to find out which areas have the most vehicles (red = many, green = less). <br />
+The Heat Map allows you to find out which areas include the biggest number of vehicles (red = many, green = less). <br />
 The Heat map and the search vehilces process are available for all users.
 ## Features - must
 1) Responsive Heat Map - 3 layers one on top of another (Polygon of Israel state, Heat map, Points of existing vehicles).
 2) Create and edit personal profile.
 3) Upload new vehicle.
-4) Search vehicles and see their details and focus on the map.
+4) Search for vehicles manually, finding their specifications and pointing out their location on the map.
 ## Features - optional
-1) Public chat with the owner of the vehicle (which have been found in the search process).
+1) Public chat with the vehicle's owner (who have been traced during the search process).
 2) Additional information about specific vehicle from free API.
 3) Deploy to Cloud
 
 # Design
 ## Description
 FrontEnd with HTML, BackEnd with Flask (Python 3) and Database with SQLite (SQLAlchemy).
-The package 'website' contains the all application. The main file (main.py) imports website and the function create_app(app), which creates the package, the database and initializes the blueprints. The application is divided into 2 Blueprints: auth and views. <br />
+The package 'website' includes all application. The main file (main.py) imports website and the function create_app(app), which creates the package, the database and initializes the blueprints. The application is divided into 2 Blueprints: auth and views. <br />
 auth handles the operations: login, signup and logout. <br />
 views handles the operations: Display/Delete user profile, Upload/Delete vehicle, Search vehicles, Display analytics (Heat Map page).
 
