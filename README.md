@@ -45,7 +45,13 @@ views handles the operations: Display/Delete user profile, Upload/Delete vehicle
 ** copy the lines below to cmd in this order! <br />
 python -m set_up.py <br />
 python -m pip install --upgrade pip <br />
-python .\run_setup.py <br />
+
+Go to requirements.txt and change the path to the Fiona and GDAL files (located in wheels folder, in website folder) <br />
+line 27: Fiona @ file:///<path_to_file_in_your_PC> <br />
+line 36: GDAL @ file:///<path_to_file_in_your_PC> <br />
+
+![Requirements_FIona_GDAL](https://user-images.githubusercontent.com/58309185/194172462-7cfd1a54-8579-4a7b-b7cf-083830a720b0.png)
+
 python -m venv env <br />
 \venv\Scripts\activate <br />
 python -m pip install --upgrade pip <br />
