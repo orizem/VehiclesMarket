@@ -89,7 +89,7 @@ def edit_profile():
     form.city.data = user.city
     form.gender.data = user.gender
 
-    return render_template('edit_profile.html', user=current_user, form=form)
+    return render_template('edit_profile.html', user=current_user, form=form, page='edit_profile')
 
 
 @views.route('/delete_profile', methods=['GET', 'POST'])
@@ -123,7 +123,7 @@ def upload_vehicle():
         db.session.commit()
         return redirect(url_for('views.profile'))
 
-    return render_template('upload_vehicle.html', form=form)
+    return render_template('upload_vehicle.html', form=form, page='upload_vehicle')
 
 
 @views.route('/delete_vehicle/<int:id>')
@@ -228,7 +228,7 @@ def search():
             search_form.sort_by.data = ""
             search_form.sort_type.data = "ASC"
             checkbox = "None"
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox, page='search',
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
         # ========== Initializes for submit ==========
@@ -252,7 +252,7 @@ def search():
 
         # Handle search button pressed
         if search_form.search.data:
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox, page='search',
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
         # Handle download button pressed
@@ -268,17 +268,17 @@ def search():
         if search_form.prevBtn.data:
             if page_table > 0:
                 page_table -= 1
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox, page='search',
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
         # Handle next button pressed
         if search_form.nextBtn.data:
             if page_table < math.ceil(len(res)/size_table)-1:
                 page_table += 1
-            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox,
+            return render_template('search.html', form=search_form, vehicles=vehicles, data=res, page_table=page_table, size_table=size_table, checkbox=checkbox, page='search',
                 slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
-    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox,
+    return render_template('search.html', form=search_form, vehicles=vehicles, data=vehicles, page_table=page_table, size_table=size_table, checkbox=checkbox, page='search',
              slider_min_price=price_min_price, slider_max_price=price_max_price, slider_min_km=km_min, slider_max_km=km_max, slider_min_capacity=capacity_min, slider_max_capacity=capacity_max)
 
 
@@ -335,7 +335,7 @@ def analytics():
     # Generating map by given layears
     CreateMap([gdf, heat_data, merge_df], ['Polygon', 'Heat Map', 'Points'])
 
-    return render_template('analytics.html')
+    return render_template('analytics.html', page='analytics')
 
 
 @views.route('/map')
