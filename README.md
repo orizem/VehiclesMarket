@@ -53,4 +53,5 @@ line 36: GDAL @ file:///<path_to_file_in_your_PC> <br />
 python -m venv env <br />
 env\Scripts\activate <br />
 python -m pip install -r requirements.txt <br />
+python -m pip install --upgrade pip <br />
 python -m main
